@@ -8,6 +8,7 @@ using TelegramBot.logics;
 
 Stopwatch stopwatch;
 Database.InitializeDatabase();
+CommandManager.CommandInit();
 
 string? GetToken()
 {
@@ -48,8 +49,6 @@ var startedTest =
 Console.WriteLine(startedTest); 
 Console.ReadLine();
 cts.Cancel(); // stop the bot
-
-
 async Task OnMessage(Message msg, UpdateType type) {
     stopwatch = Stopwatch.StartNew();
     if(msg.Chat.Type == ChatType.Private) return;// and more
@@ -63,46 +62,17 @@ async Task OnMessage(Message msg, UpdateType type) {
          else await OnCommand(msg, "","", "",new(), false);
 }
 async Task OnCommand(Message msg, string command, string mention, string args, List<string> flags, bool isReply) {
-    try {
         if (msg.From is{ IsBot: false}) { //If the bot sent a message | ignore
-            //not necessarily --------- start
-            string allMyFlags = " ";
-            int jff = flags.Count;
-            for (int j = 0; j < jff ; j++) {
-                allMyFlags += flags[j];
-            }
-            var text = $"Original request: {msg.Text}\ncommand: {command}\nmention: {mention}\nargs: {args}\nisReply: {isReply}\nflags {allMyFlags} ";
-            Console.WriteLine($"Received command: \n{text}");
-            //not necessarily ----------- end
-            switch (command) {
-                case $"ping":
-                    await Ping.Pong(bot, msg);
-                    break;
-                case $"time":
-                    await Time.GetCurrentTime(bot, msg);
-                    break;
-                case $"leaders":
-                    await DataBaseManager.GetLeaderBoard(bot, msg, args, flags);
-                    break;
-                case $"info":
-                    await DataBaseManager.GetUserInfo(bot, msg, mention, flags, isReply);
-                    break;
-            }
 
+            CommandManager.DispatchCommand(bot,msg, command,mention,args,flags,isReply, stopwatch);
             if (!Constants.IsCommandsConsidered && command == string.Empty) {
                 await DataBaseManager.AddExp(bot, msg);
             }
         }
-        else {
-            await bot.SendMessage(
-                msg.Chat.Id,
-                "эй ноу, brother. You are fucking bot");
-        }
-    }finally { await Response.LogResponseTime(stopwatch, bot, msg); }
+        else await bot.SendMessage(msg.Chat.Id, "эй ноу, brother. You are fucking bot");
 }
 
 async Task OnError(Exception exception, HandleErrorSource source) {
     Console.WriteLine(exception);
     await Task.Delay(2000, cts.Token);
-}
-
+} 

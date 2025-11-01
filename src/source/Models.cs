@@ -18,3 +18,19 @@ public class LeaderBoardEntry {
     public float Exp { get; set; }
     
 }
+
+public class Command{
+    public string MainName { get;} //Будет использоваться для help
+    //For example, mainName: .info | subName .inf or .information 
+    public List<string> CommandNames { get; set; } = new();
+    public Command(string mainName) {
+        MainName = mainName;
+        CommandNames.Add(MainName);
+    }
+    public Command InitSubs(params string[] subNames) { 
+        if (subNames != null) CommandNames.AddRange(subNames);
+        return this;
+    }
+
+
+}
