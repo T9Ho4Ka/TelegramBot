@@ -9,44 +9,25 @@ using TelegramBot.logics;
 Stopwatch stopwatch;
 Database.InitializeDatabase();
 CommandManager.CommandInit();
+var bot = TokenManager.InitTokenAsync();
 
-string? GetToken()
-{
-    
-    var configuration = new ConfigurationBuilder()
-        .SetBasePath(Directory.GetCurrentDirectory())
-        .AddUserSecrets<Program>()
-        .Build();
-
-    string botToken = configuration["Bot:Token"];
-
-    if (string.IsNullOrEmpty(botToken))
-    {
-        Console.WriteLine("Ошибка: Переменная окружения не найдена.");
-        return "YOUR_BOT_TOKEN";
-    }
-    return botToken;
-}
-
-var botToken = GetToken() ?? "YOUR_BOT_TOKEN";
-using var cts = new CancellationTokenSource();
-
-var bot = new TelegramBotClient(botToken, cancellationToken: cts.Token);
-var botStatus = await bot.GetMe();
+using var cts = new CancellationTokenSource(); 
+var botStatus = await bot.GetMe(cts.Token);
+var startedTest =
+    $"""
+     Bot is running.
+     =========INFO=========
+     UserName: {botStatus.Username}
+     UserId: {botStatus.Id}
+     Client version: {Constants.VERSION}
+     Press Enter to terminate
+     ======================
+     """;
+Console.WriteLine(startedTest);
 
 bot.OnError += OnError;
 bot.OnMessage += OnMessage;
 
-var startedTest =
-    $"Bot is running." +
-    $"\n=========INFO=========" +
-    $"\nUserName: {botStatus.Username}" +
-    $"\nUserId: {botStatus.Id}" +
-    $"\nClient version: {Constants.VERSION}" +
-    $"\nPress Enter to terminate" +
-    $"\n======================";
-
-Console.WriteLine(startedTest); 
 Console.ReadLine();
 cts.Cancel(); // stop the bot
 async Task OnMessage(Message msg, UpdateType type) {

@@ -20,8 +20,7 @@ public class LeaderBoardEntry {
 }
 
 public class Command{
-    public string MainName { get;} //Будет использоваться для help
-    //For example, mainName: .info | subName .inf or .information 
+    public string MainName { get;} //For example, mainName: .info | subNames .inf and .information 
     public List<string> CommandNames { get; set; } = new();
     public Command(string mainName) {
         MainName = mainName;
