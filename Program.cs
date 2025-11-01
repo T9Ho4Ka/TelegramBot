@@ -23,8 +23,11 @@ Console.WriteLine(startedTest);
 bot.OnError += OnError;
 bot.OnMessage += OnMessage;
 
-Console.ReadLine();
-cts.Cancel(); // stop the bot
+while (true) {
+    string? input = Console.ReadLine().Trim().ToLower();
+    if(input == "exit") cts.Cancel(); // stop the bot
+    //coming soon
+}
 async Task OnMessage(Message msg, UpdateType type) {
     stopwatch = Stopwatch.StartNew();
     if(msg.Chat.Type == ChatType.Private) return;// and more

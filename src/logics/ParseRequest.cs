@@ -12,7 +12,7 @@ public class Parser {
         args = string.Empty;
         flags = new();
         isReply = msg.ReplyToMessage != null;
-        var request = msg.Text?.Trim()[1..] ?? ""; //trimmed request 
+        var request = msg.Text?.Trim()[1..].ToLower() ?? ""; //trimmed request 
         //==============
         //   Command
         //==============
