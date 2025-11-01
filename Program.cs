@@ -1,9 +1,4 @@
-﻿using System.Data;
-using Microsoft.Extensions.Configuration;
-using TelegramBot.Debugging;
-using TelegramBot.general;
-using TelegramBot.fun;
-using TelegramBot.database;
+﻿using TelegramBot.database;
 using TelegramBot.logics;
 
 Stopwatch stopwatch;

@@ -1,5 +1,4 @@
-﻿using TelegramBot.source;
-namespace TelegramBot.database;
+﻿namespace TelegramBot.database;
 
 public class DataBaseManager {
     public static async Task AddExp(ITelegramBotClient bot, Message msg) {
