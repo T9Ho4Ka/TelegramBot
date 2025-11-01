@@ -17,7 +17,6 @@
 
   <ItemGroup>
     <Folder Include="src/moderation" />
-    <Folder Include="src\logics\" />
   </ItemGroup>
 
 </Project>
