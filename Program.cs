@@ -45,50 +45,35 @@ var startedTest =
     $"\nPress Enter to terminate" +
     $"\n======================";
 
-Console.WriteLine(startedTest);
+Console.WriteLine(startedTest); 
 Console.ReadLine();
 cts.Cancel(); // stop the bot
 
-async Task OnError(Exception exception, HandleErrorSource source) {
-    Console.WriteLine(exception);
-    await Task.Delay(2000, cts.Token);
-}
 
 async Task OnMessage(Message msg, UpdateType type) {
     stopwatch = Stopwatch.StartNew();
+    if(msg.Chat.Type == ChatType.Private) return;// and more
     
-    if (msg.NewChatMembers != null) {
-        if (msg.NewChatMembers.Any(user => user.IsBot && user.Id == bot.BotId)) {
-            var chatId = msg.Chat.Id;
-            Database.AddOrUpdateChat(chatId);
-            Console.WriteLine($"[BOT] Бот добавлен в новый чат с ID: {chatId}");
-        }
-    }
-    else if (msg.Text != null && msg.Text.StartsWith(Constants.Prefix)) {
-        var request = msg.Text.Trim()[1..]; //pure request
-        var mention = string.Empty;
-        var flags = string.Empty;
-        var isReply = false;
-        var endOfCommand = request.IndexOf(' ');
-        if (endOfCommand < 0) endOfCommand = request.Length; //if only the command was sent
-        var command = request[..endOfCommand];
-        
-        var mentionEntity = msg.Entities?.FirstOrDefault(e => e.Type == MessageEntityType.Mention);
-        if (mentionEntity != null) mention = request.Substring(
-                startIndex: mentionEntity.Offset,
-                length: mentionEntity.Length-1);
-        else if (msg.ReplyToMessage != null) isReply = true;
-        
-        await OnCommand(msg,command, mention, isReply, flags);
-    }
-    else if (type == UpdateType.Message) {
-        Console.WriteLine($"Received text '{msg.Text}' in {msg.Chat.Type}.  {msg.Chat.Username ?? msg.Chat.FirstName ?? msg.Chat.Title}");
-    }
+     if (msg.Text != null && msg.Text.StartsWith(Constants.Prefix) && msg.Text.Length is > 2 and < 50) { 
+        ParseRequest(ref msg, out var request, out var command, out var mention, out var args, out var flags, out var isReply);
+        await OnCommand(msg, command, mention, args, flags, isReply);
+     }else if (msg.NewChatMembers != null)
+         if (msg.NewChatMembers.Any(user => user.IsBot && user.Id == bot.BotId))
+             await DataBaseManager.AddGroupChat(msg.Chat.Id);
+         else await OnCommand(msg, "","", "",new(), false);
 }
-async Task OnCommand(Message msg, string command, string mention = "", bool isReply = false, string flags = "", string args = "") {
+async Task OnCommand(Message msg, string command, string mention, string args, List<string> flags, bool isReply) {
     try {
-        if (!msg.From.IsBot) {
-            Console.WriteLine($"Received command: {command} @{mention}, Is Reply: {isReply}, flags: {flags}");
+        if (msg.From is{ IsBot: false}) { //If the bot sent a message | ignore
+            //not necessarily --------- start
+            string allMyFlags = " ";
+            int jff = flags.Count;
+            for (int j = 0; j < jff ; j++) {
+                allMyFlags += flags[j];
+            }
+            var text = $"Original request: {msg.Text}\ncommand: {command}\nmention: {mention}\nargs: {args}\nisReply: {isReply}\nflags {allMyFlags} ";
+            Console.WriteLine($"Received command: \n{text}");
+            //not necessarily ----------- end
             switch (command) {
                 case $"ping":
                     await Ping.Pong(bot, msg);
@@ -100,7 +85,7 @@ async Task OnCommand(Message msg, string command, string mention = "", bool isRe
                     await DataBaseManager.GetLeaderBoard(bot, msg, args, flags);
                     break;
                 case $"info":
-                    await DataBaseManager.GetUserInfo(bot, msg, mention,isReply, flags);
+                    await DataBaseManager.GetUserInfo(bot, msg, mention, flags, isReply);
                     break;
             }
 
@@ -113,5 +98,74 @@ async Task OnCommand(Message msg, string command, string mention = "", bool isRe
                 msg.Chat.Id,
                 "эй ноу, brother. You are fucking bot");
         }
-    }finally { Response.LogResponseTime(stopwatch, bot, msg); }
+    }finally { await Response.LogResponseTime(stopwatch, bot, msg); }
+}
+
+async Task OnError(Exception exception, HandleErrorSource source) {
+    Console.WriteLine(exception);
+    await Task.Delay(2000, cts.Token);
+}
+
+void ParseRequest(ref Message msg,
+    out string request,
+    out string command,
+    out string mention,
+    out string args,
+    out List<string> flags, out bool isReply) {
+    
+    mention = string.Empty;
+    args = string.Empty;
+    flags = new();
+    isReply = msg.ReplyToMessage != null;
+    request = msg.Text?.Trim()[1..] ?? ""; //trimmed request 
+    //==============
+    //   Command
+    //==============
+    var endOfCommand = request.IndexOf(' ');
+    if (endOfCommand < 0) {
+        endOfCommand = request.Length;
+        command = request[..endOfCommand];
+        return;
+    }
+     //if only the command was sent
+    command = request[..endOfCommand];
+    request = request[(command.Length + 1)..].Trim(); //-command
+
+
+    //==============
+    //   Mention
+    //==============
+    var mentionEntity = msg.Entities?.FirstOrDefault(e => e.Type == MessageEntityType.Mention);
+    if (mentionEntity != null) {
+        mention = msg.Text.Substring(
+            startIndex: mentionEntity.Offset,
+            length: mentionEntity.Length);
+        request = request.Replace(mention, "").Trim();
+    }
+    //else -> me
+    if (string.IsNullOrEmpty(request)) return; // command mention.
+    
+    //==============
+    //   flags
+    //==============
+    while (true){
+        var flagIndex = request.IndexOf(Constants.OptionPrefix);
+        if (flagIndex < 0) break; //если флагов нет.
+    
+        var flagEnd = request.IndexOf(' ', flagIndex);
+        if (flagEnd < 0) flagEnd = request.Length; // and break
+        
+        var flag = request.Substring(flagIndex, flagEnd - flagIndex);
+        if (flag.Length == 2) flags.Add(flag);
+        request = request.Remove(flagIndex, flag.Length).Trim();
+    }
+    if (string.IsNullOrEmpty(request)) return; //command flag/command mention flag
+    
+    //==============
+    //   args
+    //==============
+    
+    var isArgs = request.IndexOf(' '); // the end args
+    if (isArgs > 0) args = request[..(isArgs+1)];
+    else args = request;
 }
