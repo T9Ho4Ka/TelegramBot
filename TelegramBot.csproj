@@ -16,6 +16,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="data\cache\avatars\" />
+    <Folder Include="data\templates\" />
     <Folder Include="src/moderation" />
   </ItemGroup>
 

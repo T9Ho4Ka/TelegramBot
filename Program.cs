@@ -25,7 +25,10 @@ bot.OnMessage += OnMessage;
 
 while (true) {
     string? input = Console.ReadLine().Trim().ToLower();
-    if(input == "exit") cts.Cancel(); // stop the bot
+    if(input == "exit") {
+        cts.Cancel(); // stop the bot
+        Environment.Exit(0);
+    }
     //coming soon
 }
 async Task OnMessage(Message msg, UpdateType type) {
@@ -41,14 +44,14 @@ async Task OnMessage(Message msg, UpdateType type) {
          else await OnCommand(msg, "","", "",new(), false);
 }
 async Task OnCommand(Message msg, string command, string mention, string args, List<string> flags, bool isReply) {
-        if (msg.From is{ IsBot: false}) { //If the bot sent a message | ignore
+        if (msg.From is not { IsBot: false}) await bot.SendMessage(msg.Chat.Id, "эй ноу, brother. You are fucking bot");
+        else{
 
             CommandManager.DispatchCommand(bot,msg, command,mention,args,flags,isReply, stopwatch);
             if (!Constants.IsCommandsConsidered && command == string.Empty) {
                 await DataBaseManager.AddExp(bot, msg);
             }
         }
-        else await bot.SendMessage(msg.Chat.Id, "эй ноу, brother. You are fucking bot");
 }
 
 async Task OnError(Exception exception, HandleErrorSource source) {
