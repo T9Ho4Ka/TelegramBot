@@ -2,6 +2,7 @@
     public class Constants {
         public const string Prefix = ".";
         public const char OptionPrefix = '-';
+        public const string EnvironmentalVariable = "TELEGRAM_BOT_TOKEN"; 
 
         public const string VERSION = "ALPHA 0.0.1";
         public const bool IsCommandsConsidered = false;
