@@ -1,4 +1,5 @@
-﻿namespace TelegramBot.database;
+﻿using TelegramBot.logics;
+namespace TelegramBot.database;
 
 public class DataBaseManager {
     public static async Task AddExp(ITelegramBotClient bot, Message msg) {
@@ -49,6 +50,54 @@ public class DataBaseManager {
                   $"Required exp: {userInfo.RequiredExp}\n" +
                   $"A total of {userInfo.MessageCount} messages have been posted",
             parseMode: ParseMode.Html);
+     
+        if (!File.Exists($"{Constants.AvatarsPath}/avatar{userInfo.UserId}.jpg")) {
+            var userPhotos = await bot.GetUserProfilePhotos(userInfo.UserId, limit: 1);
+
+            // Проверяем, есть ли вообще фотографии
+            if (userPhotos != null && userPhotos.TotalCount > 0)
+            {
+                // 2. Находим самую большую версию первой фотографии
+                // PhotoSize.FirstOrDefault() возвращает null, если массив пуст
+                var photo = userPhotos.Photos[0].OrderByDescending(p => p.FileSize).FirstOrDefault();
+
+                if (photo != null)
+                {
+                    // 3. Получаем информацию о файле (включая FilePath)
+                    // GetFileAsync возвращает объект File, содержащий FileId и FilePath
+                    var fileInfo = await bot.GetFile(photo.FileId);
+
+                    // 4. Определяем полный путь для сохранения файла
+                    string fullPath = $"{Constants.AvatarsPath}/avatar{userInfo.UserId}.jpg";
+
+                    // 5. Создаем MemoryStream для сохранения данных
+                    using (var stream = new MemoryStream())
+                    {
+                        // 6. Скачиваем файл в наш поток (Stream)
+                        // Этот метод скачивает фактические байты файла с серверов Telegram
+                        await bot.DownloadFile(
+                            filePath: fileInfo.FilePath,
+                            destination: stream
+                        );
+
+                        // 7. Преобразуем поток в массив байтов и записываем на диск
+                        File.WriteAllBytes(fullPath, stream.ToArray());
+                    }
+                }
+            }
+        }
+        var photoBytes = DrawLogics.GenerateCard(
+            userInfo.UserName,
+            userInfo.Level,
+            userInfo.Exp,
+            (int)userInfo.RequiredExp,
+            userInfo.UserId);
+        using (var stream = new MemoryStream(photoBytes)) {
+            await bot.SendPhoto(
+                chatId: msg.Chat.Id,
+                photo: InputFile.FromStream(stream, "card.jpg")
+            );
+        }
 
     }
 

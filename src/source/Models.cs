@@ -11,12 +11,13 @@ public class UserStats {
     
 }
 
-public class LeaderBoardEntry {
+public class UserProfile {
+    public string UserName { get; set; }
     public long UserId { get; set; }
     public int Rank { get; set; }
     public int Level { get; set; }
     public float Exp { get; set; }
-    
+    public long RequiredExp { get; set; }
 }
 
 public class Command{
@@ -30,6 +31,4 @@ public class Command{
         if (subNames != null) CommandNames.AddRange(subNames);
         return this;
     }
-
-
 }

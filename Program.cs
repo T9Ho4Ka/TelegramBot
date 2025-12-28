@@ -1,9 +1,11 @@
-﻿using TelegramBot.database;
+﻿using System.Runtime.InteropServices.Marshalling;
+using TelegramBot.database;
 using TelegramBot.logics;
 
 Stopwatch stopwatch;
 Database.InitializeDatabase();
 CommandManager.CommandInit();
+DrawLogics.IsExampleExit();
 var bot = TokenManager.InitTokenAsync();
 
 using var cts = new CancellationTokenSource(); 
@@ -35,7 +37,7 @@ async Task OnMessage(Message msg, UpdateType type) {
     stopwatch = Stopwatch.StartNew();
     if(msg.Chat.Type == ChatType.Private) return;// and more
     
-     if (msg.Text != null && msg.Text.StartsWith(Constants.Prefix) && msg.Text.Length is > 2 and < 50) { 
+     if (msg.Text != null && msg.Text.StartsWith(Constants.Prefix) && msg.Text.Length is > 1 and < 50) { 
          Parser.ParseRequest(ref msg, out var command, out var mention, out var args, out var flags, out var isReply);
         await OnCommand(msg, command, mention, args, flags, isReply);
      }else if (msg.NewChatMembers != null)

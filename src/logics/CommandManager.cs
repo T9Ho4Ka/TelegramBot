@@ -35,8 +35,7 @@ public class CommandManager {
                     break;
                 case "leaderboard":
                     await DataBaseManager.GetLeaderBoard(bot, msg, args, flags);
-                    break;
-            }
+                    break; }
         }
         finally {
             await Response.LogResponseTime(bot, msg, stopwatch); };
