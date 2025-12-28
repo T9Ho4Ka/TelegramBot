@@ -17,4 +17,10 @@ database.db
 [Bb]uild[Ll]og.*
 
 *.orig
-data/cache/avatars/
+
+# Cache
+data/cache/avatars/*
+!data/cache/avatars/default.jpg
+
+data/templates/*
+!data/templates/default.jpg
