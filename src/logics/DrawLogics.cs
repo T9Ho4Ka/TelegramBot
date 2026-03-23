@@ -1,6 +1,8 @@
 ﻿using SkiaSharp;
 namespace TelegramBot.logics;
 
+#pragma warning disable CS0618 // Type or member is obsolete
+
 public class DrawLogics {
     
     public static void IsExampleExit() {

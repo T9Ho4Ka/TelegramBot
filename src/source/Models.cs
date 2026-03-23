@@ -3,7 +3,7 @@
 public class UserStats {
     public long ChatId { get; set; }
     public long UserId { get; set; }
-    public string UserName { get; set; }
+    public string UserName { get; set; } = string.Empty;
     public int Level { get; set; } = 1;
     public float Exp { get; set; } = 0.0f;
     public long MessageCount { get; set; }
@@ -12,7 +12,7 @@ public class UserStats {
 }
 
 public class UserProfile {
-    public string UserName { get; set; }
+    public string UserName { get; set; } = string.Empty;
     public long UserId { get; set; }
     public int Rank { get; set; }
     public int Level { get; set; }

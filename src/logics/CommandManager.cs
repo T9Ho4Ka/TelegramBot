@@ -14,7 +14,7 @@ public class CommandManager {
         CommandList.Add(new Command("leaderboard").InitSubs("leaders", "leader", "top"));
     }
 
-    private static string  HandleCommand(string command) {
+    private static string? HandleCommand(string command) {
         var cmd = CommandList.FirstOrDefault(c => c.CommandNames.Contains(command))?.MainName;
         return cmd;
     }

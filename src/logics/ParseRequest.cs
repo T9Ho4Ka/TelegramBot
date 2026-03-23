@@ -31,7 +31,7 @@ public class Parser {
         //   Mention
         //==============
         var mentionEntity = msg.Entities?.FirstOrDefault(e => e.Type == MessageEntityType.Mention);
-        if (mentionEntity != null) {
+        if (mentionEntity != null && msg.Text != null) {
             mention = msg.Text.Substring(
                 startIndex: mentionEntity.Offset,
                 length: mentionEntity.Length);

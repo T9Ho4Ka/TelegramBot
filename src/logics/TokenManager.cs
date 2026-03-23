@@ -54,7 +54,7 @@ public class TokenManager {
                 Environment.Exit(-1);
             }
         }
-        return bot;
+        return bot!; // bot гарантированно не null на этой точке
     }
 
 }

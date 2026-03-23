@@ -1,8 +1,6 @@
-﻿using System.Runtime.InteropServices.Marshalling;
-using TelegramBot.database;
+﻿using TelegramBot.database;
 using TelegramBot.logics;
 
-Stopwatch stopwatch;
 Database.InitializeDatabase();
 CommandManager.CommandInit();
 DrawLogics.IsExampleExit();
@@ -10,6 +8,7 @@ var bot = TokenManager.InitTokenAsync();
 
 using var cts = new CancellationTokenSource(); 
 var botStatus = await bot.GetMe(cts.Token);
+
 var startedTest =
     $"""
      Bot is running.
@@ -25,8 +24,10 @@ Console.WriteLine(startedTest);
 bot.OnError += OnError;
 bot.OnMessage += OnMessage;
 
+Stopwatch stopwatch = new();
+
 while (true) {
-    string? input = Console.ReadLine().Trim().ToLower();
+    string? input = Console.ReadLine()?.Trim().ToLower();
     if(input == "exit") {
         cts.Cancel(); // stop the bot
         Environment.Exit(0);
@@ -46,10 +47,11 @@ async Task OnMessage(Message msg, UpdateType type) {
          else await OnCommand(msg, "","", "",new(), false);
 }
 async Task OnCommand(Message msg, string command, string mention, string args, List<string> flags, bool isReply) {
-        if (msg.From is not { IsBot: false}) await bot.SendMessage(msg.Chat.Id, "эй ноу, brother. You are fucking bot");
-        else{
-
-            CommandManager.DispatchCommand(bot,msg, command,mention,args,flags,isReply, stopwatch);
+        if (msg.From?.IsBot == true) {
+            await bot.SendMessage(msg.Chat.Id, "эй ноу, brother. You are fucking bot");
+        }
+        else {
+            await CommandManager.DispatchCommand(bot, msg, command, mention, args, flags, isReply, stopwatch);
             if (!Constants.IsCommandsConsidered && command == string.Empty) {
                 await DataBaseManager.AddExp(bot, msg);
             }

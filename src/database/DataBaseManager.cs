@@ -66,8 +66,9 @@ public class DataBaseManager {
                     // 3. Получаем информацию о файле (включая FilePath)
                     // GetFileAsync возвращает объект File, содержащий FileId и FilePath
                     var fileInfo = await bot.GetFile(photo.FileId);
-
-                    // 4. Определяем полный путь для сохранения файла
+                    
+                    if (fileInfo.FilePath == null) return;
+                    
                     string fullPath = $"{Constants.AvatarsPath}/avatar{userInfo.UserId}.jpg";
 
                     // 5. Создаем MemoryStream для сохранения данных
