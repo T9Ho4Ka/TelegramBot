@@ -1,4 +1,4 @@
-﻿namespace TelegramBot.logics;
+﻿namespace TelegramBot.core;
 
 public class Parser {
     
@@ -65,3 +65,4 @@ public class Parser {
         else args = request;
     }
 }
+

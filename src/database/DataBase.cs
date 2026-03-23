@@ -1,4 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
+using TelegramBot.models;
+
 namespace TelegramBot.database;
 
 public static class Database {

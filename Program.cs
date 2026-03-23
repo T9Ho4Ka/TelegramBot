@@ -1,5 +1,7 @@
 ﻿using TelegramBot.database;
-using TelegramBot.logics;
+using TelegramBot.core;
+using TelegramBot.services;
+using TelegramBot.utilities;
 
 Database.InitializeDatabase();
 CommandManager.CommandInit();

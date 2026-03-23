@@ -1,5 +1,4 @@
-﻿
-namespace TelegramBot.general;
+﻿namespace TelegramBot.commands;
 
 public class Time {
     public static async Task GetCurrentTime(ITelegramBotClient bot, Message msg) {
@@ -10,3 +9,4 @@ public class Time {
         );
     }
 }
+

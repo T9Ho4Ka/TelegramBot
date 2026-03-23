@@ -1,4 +1,4 @@
-﻿namespace TelegramBot.general;
+﻿namespace TelegramBot.commands;
 
 public class Status
 {
@@ -10,3 +10,4 @@ public class Status
             );
     }
 }
+

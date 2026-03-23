@@ -1,4 +1,4 @@
-﻿namespace TelegramBot.source;
+﻿namespace TelegramBot.models;
 
 public class UserStats {
     public long ChatId { get; set; }
@@ -32,3 +32,4 @@ public class Command{
         return this;
     }
 }
+

@@ -1,4 +1,4 @@
-﻿namespace TelegramBot.logics;
+﻿namespace TelegramBot.services;
 
 public class TokenManager {
     private static string RequestTokenFromUser() {
@@ -58,3 +58,4 @@ public class TokenManager {
     }
 
 }
+

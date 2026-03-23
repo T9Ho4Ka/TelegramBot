@@ -1,4 +1,4 @@
-﻿namespace TelegramBot.general;
+﻿namespace TelegramBot.utilities;
 
 public class Response
 {
@@ -9,3 +9,4 @@ public class Response
         Console.WriteLine(logMessage);
     }
 }
+

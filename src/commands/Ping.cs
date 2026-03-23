@@ -1,4 +1,4 @@
-﻿namespace TelegramBot.fun
+﻿namespace TelegramBot.commands
 {
 
     public class Ping
@@ -26,3 +26,4 @@
         } 
     }
 }
+

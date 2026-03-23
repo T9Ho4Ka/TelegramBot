@@ -1,4 +1,7 @@
-﻿using TelegramBot.logics;
+﻿using TelegramBot.core;
+using TelegramBot.utilities;
+using TelegramBot.models;
+
 namespace TelegramBot.database;
 
 public class DataBaseManager {

@@ -5,5 +5,5 @@ global using Telegram.Bot.Types;
 global using Telegram.Bot.Types.Enums;
 global using Telegram.Bot.Types.ReplyMarkups;
 global using Telegram.Bot.Polling;
-global using TelegramBot.source;
+global using TelegramBot.models;
 

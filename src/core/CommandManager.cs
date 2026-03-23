@@ -1,8 +1,8 @@
 ﻿using TelegramBot.database;
-using TelegramBot.fun;
-using TelegramBot.general;
+using TelegramBot.commands;
+using TelegramBot.utilities;
 
-namespace TelegramBot.logics;
+namespace TelegramBot.core;
 
 public class CommandManager {
     private static List<Command> CommandList = new();
@@ -42,3 +42,4 @@ public class CommandManager {
         return true;
     }
 }
+

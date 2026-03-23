@@ -1,5 +1,5 @@
 ﻿using SkiaSharp;
-namespace TelegramBot.logics;
+namespace TelegramBot.utilities;
 
 #pragma warning disable CS0618 // Type or member is obsolete
 
@@ -98,26 +98,30 @@ public class DrawLogics {
                        null,
                        SKShaderTileMode.Clamp),
                    IsAntialias = true
-               }) {
-            var radius = barH / 2;
-            canvas.DrawRoundRect(new SKRoundRect(new SKRect(barX, barY, barX + barW, barY + barH), radius, radius), bg);
-            canvas.DrawRoundRect(
-                new SKRoundRect(new SKRect(barX, barY, barX + barW * expPercent, barY + barH), radius, radius), fg);
+
+        }) {
+            canvas.DrawRoundRect(new SKRoundRect(new SKRect(barX, barY, barX + barW, barY + barH), 10), bg);
+            canvas.DrawRoundRect(new SKRoundRect(new SKRect(barX, barY, barX + barW * expPercent, barY + barH), 10), fg);
         }
 
-        // === Текст EXP ===
-        using (var expText = new SKPaint {
-                   Color = new SKColor(200, 210, 255),
-                   TextSize = 20,
+        // === EXP Text ===
+        using (var expTextPaint = new SKPaint {
+                   Color = SKColors.White,
+                   TextSize = 18,
                    IsAntialias = true
                }) {
-            string expString = $"{currentExp.ToString("F2")} / {maxExp} EXP";
-            var textWidth = expText.MeasureText(expString);
-            canvas.DrawText(expString, barX + barW - textWidth, barY - 5, expText);
+            string expText = $"{currentExp.ToString("F1")}/{maxExp}";
+            var textBounds = new SKRect();
+            expTextPaint.MeasureText(expText, ref textBounds);
+            var centerX = barX + (barW - textBounds.Width) / 2;
+            canvas.DrawText(expText, centerX, barY + 22, expTextPaint);
         }
 
-        using var img = surface.Snapshot();
-        using var data = img.Encode(SKEncodedImageFormat.Png, 100);
+        using var image = surface.Snapshot();
+        using var data = image.Encode(SKEncodedImageFormat.Jpeg, 100);
         return data.ToArray();
     }
-} 
+}
+
+#pragma warning restore CS0618 // Type or member is obsolete
+
